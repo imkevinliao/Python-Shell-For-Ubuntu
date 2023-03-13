@@ -21,7 +21,8 @@ def run(cmds):
         stderr = completed.stderr
         log.info(f"Execute Command:{cmd}\nExecute status code: {ret}\n")
         if ret == 0:
-            log.info(f"Output:{stdout}\n")
+            if stdout:
+                log.info(f"Output:{stdout}\n")
         else:
             log.error(f"Error:{stderr}\n")
     
@@ -40,9 +41,10 @@ def popen(cmds):
             log.info(info)
         stdout, stderr = process.communicate()
         ret = process.returncode
-        log.info(f"Execute Command:{cmd}\nExecute status code{ret}\n")
+        log.info(f"Execute Command:{cmd}\nExecute status code: {ret}\n")
         if ret == 0:
-            log.info(f"Output:{stdout}\n")
+            if stdout:
+                log.info(f"Output:{stdout}\n")
         else:
             log.error(f"Error:{stderr}\n")
         process.kill()
