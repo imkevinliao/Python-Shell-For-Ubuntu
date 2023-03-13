@@ -63,6 +63,7 @@ def popen(cmds):
 def config_python():
     """
     linux 下配置 sudo 免密，或者在 root 用户下执行
+    <这些命令在我测试时候，被提示这些命令建议在终端交互下执行，不建议以脚本的方式执行>
     """
     config_source = ["sudo add-apt-repository ppa:deadsnakes/ppa -y",
                      "sudo apt update -y",
