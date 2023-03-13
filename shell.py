@@ -1,8 +1,12 @@
+import os.path
+import platform
 import re
 import subprocess
 import sys
 
 from log import Log
+
+ERROR = -1
 
 
 def run(cmds):
@@ -11,7 +15,7 @@ def run(cmds):
     传入参数类型 list 视为多条命令
     传入参数类型 str 视为一条命令
     """
-    
+
     # 函数内定义函数原因：减少缩进层级
     def core(cmd):
         completed = subprocess.run(cmd, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
@@ -25,7 +29,7 @@ def run(cmds):
                 log.info(f"Output:{stdout}\n")
         else:
             log.error(f"Error:{stderr}\n")
-    
+
     if isinstance(cmds, list):
         for _ in cmds:
             core(_)
@@ -48,7 +52,7 @@ def popen(cmds):
         else:
             log.error(f"Error:{stderr}\n")
         process.kill()
-    
+
     if isinstance(cmds, list):
         for _ in cmds:
             core(_)
@@ -94,7 +98,7 @@ def config_git():
     # 网上通常是这个
     git_log_c = """git config --global alias.lg --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset
     %s %Cgreen(%cd) %C(bold blue)<%an>%Creset' --abbrev-commit -- """
-    
+
     config_alias = ['git config --global alias.gp pull',
                     'git config --global alias.br branch',
                     'git config --global alias.co checkout',
@@ -111,6 +115,37 @@ def config_git():
     log.info(f"config git finished，please use command：<cat ~/.gitconfig> to check.")
 
 
+def git_dirs(path):
+    all_dirs = []
+    for root, dirs, files in os.walk(path):
+        for dirname in dirs:
+            all_dirs.append(os.path.join(root, dirname))
+    g_dirs = []
+    for _ in all_dirs:
+        filepath, fullname = os.path.split(_)
+        if ".git" == fullname:
+            g_dirs.append(filepath)
+    return g_dirs
+
+
+def git_update():
+    if platform.system().lower() != "linux":
+        return ERROR
+    cmd = ["cd ~ && pwd"]
+    completed = subprocess.run(cmd, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+                               stderr=subprocess.PIPE)
+    if completed.returncode == 0:
+        base_path = completed.stdout.decode("utf-8").strip()
+    else:
+        base_path = os.path.dirname(__file__)
+    git_paths = git_dirs(base_path)
+    cmds = []
+    for git_path in git_paths:
+        cmd = f"cd {git_path} && git pull"
+        cmds.append(cmd)
+    run(cmds)
+
+
 if __name__ == '__main__':
     log = Log("shell.log")
-    
+    git_update()
