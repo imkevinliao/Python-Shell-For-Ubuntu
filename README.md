@@ -19,3 +19,5 @@
 Python存在于所有Linux发行版本中，非常泛用
 # 为什么是Ubuntu？
 Ubuntu既有服务器版本也有最好的Linux桌面版本，偶尔我也喜欢用Ubuntu桌面，我承认Windows桌面做的很优秀，可我喜欢干净的命令行风格，以及Linux的设计理念
+# Others
+- <https://github.com/DingGuodong/LinuxBashShellScriptForOps> python for linux
