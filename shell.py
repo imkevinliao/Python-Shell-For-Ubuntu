@@ -1,8 +1,7 @@
-import os.path
+import os
 import platform
 import re
 import subprocess
-import sys
 
 from log import Log
 
@@ -130,15 +129,25 @@ def git_dirs(path):
 
 
 def git_update():
-    if platform.system().lower() != "linux":
-        return ERROR
-    cmd = ["cd ~ && pwd"]
-    completed = subprocess.run(cmd, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
-                               stderr=subprocess.PIPE)
-    if completed.returncode == 0:
+    """
+    linux 下默认查找当前用户目录下
+    windows 默认查找当前脚本执行路径下
+    """
+    if platform.system().lower() == "linux":
+        cmd = ["cd ~ && pwd"]
+        completed = subprocess.run(cmd, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+                                   stderr=subprocess.PIPE)
+        if completed.returncode == 0:
+            base_path = completed.stdout.decode("utf-8").strip()
+        else:
+            base_path = os.path.dirname(__file__)
+    elif platform.system().lower() == "windows":
+        cmd = ["chdir"]
+        completed = subprocess.run(cmd, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+                                   stderr=subprocess.PIPE)
         base_path = completed.stdout.decode("utf-8").strip()
     else:
-        base_path = os.path.dirname(__file__)
+        return ERROR
     git_paths = git_dirs(base_path)
     cmds = []
     for git_path in git_paths:
@@ -149,4 +158,3 @@ def git_update():
 
 if __name__ == '__main__':
     log = Log("shell.log")
-    git_update()
