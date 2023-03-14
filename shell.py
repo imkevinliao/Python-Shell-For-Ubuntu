@@ -34,6 +34,8 @@ def run(cmds):
             core(_)
     elif isinstance(cmds, str):
         core(cmds)
+    else:
+        raise Exception("Input parameter is incorrect.")
 
 
 def popen(cmds):
@@ -57,6 +59,8 @@ def popen(cmds):
             core(_)
     elif isinstance(cmds, str):
         core(cmds)
+    else:
+        raise Exception("Input parameter is incorrect.")
 
 
 def config_python():
